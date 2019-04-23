@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Yatzy labb</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+
+    <div id="app">
+        <dice-area>
+
+        </dice-area>
+
+    </div>
+
+
+</body>
+<script>
+    Vue.component('dice-area', {
+        props: ['dice'],
+        template: `
+        <div>
+        <button v-on:click="isSaved = !isSaved" v-bind:class="{active: isSaved}"></button>
+        <br>
+        <button v-on:click="isSaved = !isSaved" v-bind:class="{active: isSaved}"></button>
+        <br>
+        <button v-on:click="roll"> </button>
+        </div>  
+        `,
+        data: function () {
+            return {
+                isSaved: false
+            };
+        },
+        methods: {
+            roll: function () {
+                if(!this.isSaved){
+                for (var i = 0; i < document.getElementsByClassName("notSaved").length; i++) {
+
+                    var element = document.getElementsByClassName("notSaved")[i];
+
+                    var randomDiceNumber = Math.floor(Math.random() * 6);
+
+                    document.getElementsByClassName("notSaved")[i].innerHTML = randomDiceNumber;
+                    
+
+
+
+                }
+                console.dir(element);
+
+            }
+        },
+
+        }
+
+    })
+
+    const app = new Vue({
+        el: "#app",
+        data: {
+
+        },
+        methods: {
+
+        }
+
+    })
+</script>
+
+</html>
