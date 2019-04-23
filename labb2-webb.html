@@ -23,9 +23,9 @@
         props: ['dice'],
         template: `
         <div>
-        <button v-on:click="isSaved = !isSaved" v-bind:class="{active: isSaved}"></button>
+        <button v-on:click="saveNumber" v-bind:class="{'toggleDice': isSaved}"></button>
         <br>
-        <button v-on:click="isSaved = !isSaved" v-bind:class="{active: isSaved}"></button>
+        <button v-on:click="saveNumber" v-bind:class="{'saved': isSaved}"></button>
         <br>
         <button v-on:click="roll"> </button>
         </div>  
@@ -37,14 +37,14 @@
         },
         methods: {
             roll: function () {
-                if(!this.isSaved){
-                for (var i = 0; i < document.getElementsByClassName("notSaved").length; i++) {
+                if(this.isSaved === false){
+                for (var i = 0; i < document.getElementsByClassName("isSaved").length; i++) {
 
-                    var element = document.getElementsByClassName("notSaved")[i];
+                    var element = document.getElementsByClassName("isSaved")[i];
 
                     var randomDiceNumber = Math.floor(Math.random() * 6);
 
-                    document.getElementsByClassName("notSaved")[i].innerHTML = randomDiceNumber;
+                    document.getElementsByClassName("isSaved")[i].innerHTML = randomDiceNumber;
                     
 
 
@@ -53,11 +53,13 @@
                 console.dir(element);
 
             }
+            },
+            saveNumber: function(){
+                this.isSaved = !this.isSaved;
+            }
         },
 
-        }
-
-    })
+        })
 
     const app = new Vue({
         el: "#app",
