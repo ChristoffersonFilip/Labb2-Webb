@@ -4,73 +4,121 @@
 <head>
     <meta charset="utf-8">
     <title>Yatzy labb</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vuex@3.1.0/dist/vuex.js"></script>
 </head>
 
 <body>
 
     <div id="app">
-        <dice-area>
-
+        <dice-area v-for="dice, index in dices">
+                <a class="button" v-on:click="roll">Roll the dice</a>
         </dice-area>
-
     </div>
+    
 
 
 </body>
+
+</html>
 <script>
-    Vue.component('dice-area', {
-        props: ['dice'],
-        template: `
+    Vue.component('diceArea', {
+        props:['dice'],
+        template:`
         <div>
-        <button v-on:click="saveNumber" v-bind:class="{'toggleDice': isSaved}"></button>
-        <br>
-        <button v-on:click="saveNumber" v-bind:class="{'saved': isSaved}"></button>
-        <br>
-        <button v-on:click="roll"> </button>
-        </div>  
+        <img v-bind:src="showDiceImage" v-on:click="holdDice" alt="">
+        </div>
+        
         `,
-        data: function () {
-            return {
-                isSaved: false
-            };
-        },
-        methods: {
-            roll: function () {
-                if(this.isSaved === false){
-                for (var i = 0; i < document.getElementsByClassName("isSaved").length; i++) {
-
-                    var element = document.getElementsByClassName("isSaved")[i];
-
-                    var randomDiceNumber = Math.floor(Math.random() * 6);
-
-                    document.getElementsByClassName("isSaved")[i].innerHTML = randomDiceNumber;
-                    
-
-
-
-                }
-                console.dir(element);
-
-            }
-            },
-            saveNumber: function(){
-                this.isSaved = !this.isSaved;
-            }
-        },
-
-        })
+    })
 
     const app = new Vue({
         el: "#app",
         data: {
+            dices: [{
+                    name: 'DiceOne',
+                    roll: 0,
+                    hold: false
+                },
+                {
+                    name: 'DiceTwo',
+                    roll: 0,
+                    hold: false
+                }, 
+                {
+                    name: 'DiceThree',
+                    roll: 0,
+                    hold: false
+                },
+                {
+                    name: 'DiceFour',
+                    roll: 0,
+                    hold: false
+                },
+                {
+                    name: 'DiceFive',
+                    roll: 0,
+                    hold: false
+                }
+            ],
+            score: 0,
+            hold: false,
+            rolls: 0,
+            player: {
+                name: "Player",
+                score: 0,
+            }
+        },
+       
+        computed: {
+            //Generates an image of the dice depending on the value that is randomly generated
+            showDiceImage: function () {
+                if (this.dice[0] === 1) {
+                    return "http://i.imgur.com/6knk862.png";
+                }
 
+                if (this.dice[0] === 2) {
+                    return "http://i.imgur.com/ik7dK9D.png";
+                }
+
+                if (this.dice[0] === 3) {
+                    return "http://i.imgur.com/sh0H0td.png";
+                }
+
+                if (this.dice[0] === 4) {
+                    return "http://i.imgur.com/1GPkhq3.png";
+                }
+
+                if (this.dice[0] === 5) {
+                    return "http://i.imgur.com/bINitmy.png";
+                }
+
+                if (this.dice[0] === 6) {
+                    return "http://i.imgur.com/6qXMSrt.png";
+                }
+                return "http://i.imgur.com/6knk862.png";
+            }
         },
         methods: {
+            roll: function () {
+                if (this.hold === false) {
+                    for (var i = 0; i < dice.length; i++) {
+                        const element = dice[i];
 
+
+                        this.dice[i] = Math.floor(Math.random() * 6) + 1;
+                    }
+                    return this.dice[i]
+
+                }
+            },
+            //Prevents the dice from rolling a new value upon a click on the dice
+            holdDice: function () {
+                this.hold = !this.hold;
+                console.log("Hej");
+            }
         }
-
     })
 </script>
-
-</html>
