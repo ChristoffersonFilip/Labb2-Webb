@@ -37,24 +37,60 @@
         template: `
             <div>
                 <a class="button" v-on:click="roll">Click me to roll dice</a>
+                <img v-bind:src="showDiceImage" alt="">
             </div>
         `,
         methods: {
             roll: function(){
-                    if(this.$store.state.dices.hold === !true){
+                    
                     for (let i = 0; i < this.$store.state.dices.length; i++) {
+                        
                         const element = this.$store.state.dices[i];
                         
                         this.$store.state.dices[i].roll = Math.floor(Math.random() * 6) +1
                         
                     }
-                }
+                
                 
             },/*
             changeHold: function(){
                 this.$store.dices.hold = !false
             }
-        */}
+        */},
+        computed: {
+            //Generates an image of the dice depending on the value that is randomly generated                
+            showDiceImage: function () {
+                for (let i = 0; i < this.$store.state.dices.length; i++) {
+                    const element = this.$store.state.dices[i];
+                    
+                
+                if (this.$store.state.dices[i].roll === 1) {
+                    return "http://i.imgur.com/6knk862.png";
+                }
+
+                if (this.$store.state.dices[i].roll === 2) {
+                    return "http://i.imgur.com/ik7dK9D.png";
+                }
+
+                if (this.$store.state.dices[i].roll === 3) {
+                    return "http://i.imgur.com/sh0H0td.png";
+                }
+
+                if (this.$store.state.dices[i].roll === 4) {
+                    return "http://i.imgur.com/1GPkhq3.png";
+                }
+
+                if (this.$store.state.dices[i].roll === 5) {
+                    return "http://i.imgur.com/bINitmy.png";
+                }
+
+                if (this.$store.state.dices[i].roll === 6) {
+                    return "http://i.imgur.com/6qXMSrt.png";
+                }
+                return "http://i.imgur.com/6knk862.png";
+            }
+        }
+        },
    })
 
    const app = new Vue({
