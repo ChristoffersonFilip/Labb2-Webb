@@ -5,6 +5,8 @@
     <meta charset="utf-8">
     <title>Yatzy labb</title>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css%22%3E">
+    <link rel="labbstylesheet" type="text/css" href="labb2-stylesheet.css">
 </head>
 
 <body>
@@ -27,7 +29,7 @@
         <br>
         <button v-on:click="saveNumber" v-bind:class="{'saved': isSaved}"></button>
         <br>
-        <button v-on:click="roll"> </button>
+        <button v-on:click="roll"> Click this button to roll the dice </button>
         </div>  
         `,
         data: function () {
