@@ -4,75 +4,23 @@
 <head>
     <meta charset="utf-8">
     <title>Yatzy labb</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css%22%3E">
-    <link rel="labbstylesheet" type="text/css" href="labb2-stylesheet.css">
+    <script src="https://unpkg.com/vuex@3.1.0/dist/vuex.js"></script>
 </head>
 
 <body>
 
     <div id="app">
-        <dice-area>
-
-        </dice-area>
-
+        <dice>
+            
+        </dice>
     </div>
+    
 
 
 </body>
-<script>
-    Vue.component('dice-area', {
-        props: ['dice'],
-        template: `
-        <div>
-        <button v-on:click="saveNumber" v-bind:class="{'toggleDice': isSaved}"></button>
-        <br>
-        <button v-on:click="saveNumber" v-bind:class="{'saved': isSaved}"></button>
-        <br>
-        <button v-on:click="roll"> Click this button to roll the dice </button>
-        </div>  
-        `,
-        data: function () {
-            return {
-                isSaved: false
-            };
-        },
-        methods: {
-            roll: function () {
-                if(this.isSaved === false){
-                for (var i = 0; i < document.getElementsByClassName("isSaved").length; i++) {
-
-                    var element = document.getElementsByClassName("isSaved")[i];
-
-                    var randomDiceNumber = Math.floor(Math.random() * 6);
-
-                    document.getElementsByClassName("isSaved")[i].innerHTML = randomDiceNumber;
-                    
-
-
-
-                }
-                console.dir(element);
-
-            }
-            },
-            saveNumber: function(){
-                this.isSaved = !this.isSaved;
-            }
-        },
-
-        })
-
-    const app = new Vue({
-        el: "#app",
-        data: {
-
-        },
-        methods: {
-
-        }
-
-    })
-</script>
 
 </html>
+<script src="labb2-webb.js"></script>
