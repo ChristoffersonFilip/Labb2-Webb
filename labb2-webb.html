@@ -13,7 +13,11 @@
 <body>
 
     <div id="app">
-        <dice>
+        <dice 
+        dices="dices"
+        v-for="dice, index in dices"
+        v-bind:dice="dices[index]"
+        v-bind:key="index">
             
         </dice>
     </div>

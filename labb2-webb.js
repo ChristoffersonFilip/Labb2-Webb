@@ -28,16 +28,26 @@
         ]
        },
        mutations: {
-            
+           selectDice (dice){
+                dice.hold= true
+           },
+            changeHold (hold){
+                for (let i = 0; i < dices.length; i++) {
+                    const element = dices[i];
+
+                    this.dices[element].hold = true
+                    
+                }
+            }
        }
    })
 
    Vue.component('dice', {
-        props: ['dices'],
+        props: ['dices', 'dice'],
         template: `
             <div>
                 <a class="button" v-on:click="roll">Click me to roll dice</a>
-                <img v-bind:src="showDiceImage" alt="">
+                <img v-bind:src="showDiceImage" @click="changeHold(dice)" alt="">
             </div>
         `,
         methods: {
@@ -46,17 +56,18 @@
                     for (let i = 0; i < this.$store.state.dices.length; i++) {
                         
                         const element = this.$store.state.dices[i];
-                        
+                        if(this.$store.state.dices[i].hold == false){
                         this.$store.state.dices[i].roll = Math.floor(Math.random() * 6) +1
-                        
+                    }
                     }
                 
                 
-            },/*
-            changeHold: function(){
-                this.$store.dices.hold = !false
+            },
+            changeHold: function(dice){
+                store.commit('selectDice', dice)
+
             }
-        */},
+        },
         computed: {
             //Generates an image of the dice depending on the value that is randomly generated                
             showDiceImage: function () {
@@ -98,6 +109,11 @@
        store,
        data: {
 
+       },
+       computed: {
+        dices() {
+            return store.state.dices;
+        }
        },
        methods: {
 
