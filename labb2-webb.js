@@ -1,107 +1,106 @@
    const store = new Vuex.Store({
        state: {
            dices: [{
-               name: 'diceOne',
-               roll: 0,
-               hold: false
-           },
-           {
-            name: 'diceTwo',
-            roll: 0,
-            hold: false
-        },
-        {
-            name: 'diceThree',
-            roll: 0,
-            hold: false
-        },
-        {
-            name: 'diceFour',
-            roll: 0,
-            hold: false
-        },
-        {
-            name: 'diceFive',
-            roll: 0,
-            hold: false
-        }
-        ]
+                   name: 'diceOne',
+                   roll: 0,
+                   hold: false
+               },
+               {
+                   name: 'diceTwo',
+                   roll: 0,
+                   hold: false
+               },
+               {
+                   name: 'diceThree',
+                   roll: 0,
+                   hold: false
+               },
+               {
+                   name: 'diceFour',
+                   roll: 0,
+                   hold: false
+               },
+               {
+                   name: 'diceFive',
+                   roll: 0,
+                   hold: false
+               }
+           ]
        },
        mutations: {
-           selectDice (dice){
-                dice.hold= true
+           selectDice(state, index) {
+               state.dice[index].hold === !state.dice[index].hold
            },
-            changeHold (hold){
-                for (let i = 0; i < dices.length; i++) {
-                    const element = dices[i];
+           changeHold(state, hold) {
+               for (let i = 0; i < dices.length; i++) {
+                   const element = dices[i];
 
-                    this.dices[element].hold = true
-                    
-                }
-            }
+                   this.dices[i].hold == !this.dices[i].hold
+
+               }
+           }
        }
    })
 
    Vue.component('dice', {
-        props: ['dices', 'dice'],
-        template: `
+       props: ['dices', 'dice', 'index'],
+       template: `
             <div>
-                <a class="button" v-on:click="roll">Click me to roll dice</a>
-                <img v-bind:src="showDiceImage" @click="changeHold(dice)" alt="">
+                <a class="button" v-on:click="diceRoll">Click me to roll dice</a>
+                <img v-bind:src="generateImage(index)" @click="changeHold(dice)" alt="">
+                <p>{{index}}</p>
             </div>
         `,
-        methods: {
-            roll: function(){
-                    
-                    for (let i = 0; i < this.$store.state.dices.length; i++) {
-                        
-                        const element = this.$store.state.dices[i];
-                        if(this.$store.state.dices[i].hold == false){
-                        this.$store.state.dices[i].roll = Math.floor(Math.random() * 6) +1
-                    }
-                    }
-                
-                
-            },
-            changeHold: function(dice){
-                store.commit('selectDice', dice)
+       methods: {
+           //Loops through the store dice objects and gives them all a new random value from 1 - 6
+           diceRoll: function () {
 
-            }
-        },
-        computed: {
-            //Generates an image of the dice depending on the value that is randomly generated                
-            showDiceImage: function () {
-                for (let i = 0; i < this.$store.state.dices.length; i++) {
-                    const element = this.$store.state.dices[i];
-                    
-                
-                if (this.$store.state.dices[i].roll === 1) {
-                    return "http://i.imgur.com/6knk862.png";
-                }
+               for (let i = 0; i < this.$store.state.dices.length; i++) {
 
-                if (this.$store.state.dices[i].roll === 2) {
-                    return "http://i.imgur.com/ik7dK9D.png";
-                }
+                   const element = this.$store.state.dices[i];
+                   if (this.$store.state.dices[i].hold == false) {
+                       this.$store.state.dices[i].roll = Math.floor(Math.random() * 6) + 1
+                   }
+               }
 
-                if (this.$store.state.dices[i].roll === 3) {
-                    return "http://i.imgur.com/sh0H0td.png";
-                }
 
-                if (this.$store.state.dices[i].roll === 4) {
-                    return "http://i.imgur.com/1GPkhq3.png";
-                }
+           },
+           changeHold: function (dice) {
+               store.commit('selectDice', dice)
 
-                if (this.$store.state.dices[i].roll === 5) {
-                    return "http://i.imgur.com/bINitmy.png";
-                }
+           },
+           //Generates an image of the dice depending on the value that is randomly generated 
+           generateImage: function (i) {
 
-                if (this.$store.state.dices[i].roll === 6) {
-                    return "http://i.imgur.com/6qXMSrt.png";
-                }
-                return "http://i.imgur.com/6knk862.png";
-            }
-        }
-        },
+               if (this.$store.state.dices[i].roll === 1) {
+                   return "http://i.imgur.com/6knk862.png";
+               }
+
+               if (this.$store.state.dices[i].roll === 2) {
+                   return "http://i.imgur.com/ik7dK9D.png";
+               }
+
+               if (this.$store.state.dices[i].roll === 3) {
+                   return "http://i.imgur.com/sh0H0td.png";
+               }
+
+               if (this.$store.state.dices[i].roll === 4) {
+                   return "http://i.imgur.com/1GPkhq3.png";
+               }
+
+               if (this.$store.state.dices[i].roll === 5) {
+                   return "http://i.imgur.com/bINitmy.png";
+               }
+
+               if (this.$store.state.dices[i].roll === 6) {
+                   return "http://i.imgur.com/6qXMSrt.png";
+               }
+               return "http://i.imgur.com/6knk862.png";
+           }
+       },
+       computed: {
+
+       }
    })
 
    const app = new Vue({
@@ -111,21 +110,21 @@
 
        },
        computed: {
-        dices() {
-            return store.state.dices;
-        }
+           dices() {
+               return store.state.dices;
+           }
        },
        methods: {
 
        }
-       
-       
+
+
 
    })
-   
-   
-   
-   
+
+
+
+
    /*
     Vue.component('diceArea', {
         props:['dice'],
