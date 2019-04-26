@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <title>Yatzy labb</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="labb2-stylesheet.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/vuex@3.1.0/dist/vuex.js"></script>
@@ -16,6 +17,7 @@
         <rolldicecomponent>
 
         </rolldicecomponent>
+        <div class="diceContainer">
         <dice 
         dices="dices"
         v-for="(dice, index) in dices"
@@ -23,6 +25,7 @@
         v-bind:key="index"
         v-bind:index="index">
         </dice>
+        </div>
         
     </div>
     
