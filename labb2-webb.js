@@ -29,26 +29,45 @@
        },
        mutations: {
            selectDice(state, index) {
-               state.dice[index].hold === !state.dice[index].hold
+               state.dices[index].hold = !state.dices[index].hold
+               
            },
-           changeHold(state, hold) {
-               for (let i = 0; i < dices.length; i++) {
-                   const element = dices[i];
-
-                   this.dices[i].hold == !this.dices[i].hold
-
-               }
-           }
+           
        }
    })
 
-   Vue.component('dice', {
-       props: ['dices', 'dice', 'index'],
+   Vue.component('rolldicecomponent', {
+       props:[],
+       data:
+       timesRolled = 0,
+       template: `
+       <a class="button" v-on:click="diceRoll">Click me to roll dice</a>
+       `,
+       methods: {
+       diceRoll: function () {
+
+        for (let i = 0; i < this.$store.state.dices.length; i++) {
+
+            const element = this.$store.state.dices[i];
+            if (this.$store.state.dices[i].hold == false) {
+                this.$store.state.dices[i].roll = Math.floor(Math.random() * 6) + 1
+            }
+
+        }
+        timesRolled += 1
+        if (timesRolled === 4){
+            timesRolled = 1
+        }
+        console.log(timesRolled)
+    }
+   }
+})
+
+    Vue.component('dice', {
+       props: ['dices', 'dice', 'index',],
        template: `
             <div>
-                <a class="button" v-on:click="diceRoll">Click me to roll dice</a>
-                <img v-bind:src="generateImage(index)" @click="changeHold(dice)" alt="">
-                <p>{{index}}</p>
+                <img v-bind:src="generateImage(index)" @click="changeHold(index)" alt="">
             </div>
         `,
        methods: {
@@ -65,8 +84,9 @@
 
 
            },
-           changeHold: function (dice) {
-               store.commit('selectDice', dice)
+           changeHold: function (index) {
+               store.commit('selectDice', index)
+
 
            },
            //Generates an image of the dice depending on the value that is randomly generated 
@@ -115,9 +135,8 @@
            }
        },
        methods: {
-
-       }
-
+        
+    }
 
 
    })
