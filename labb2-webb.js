@@ -65,29 +65,31 @@ const store = new Vuex.Store({
             state.dices[index].hold = !state.dices[index].hold
         },
         chooseOnes(state) {
-            state.scoreTable[0].status = true;
-            state.scoreTable[0].score = state.scoreTable[0].potentialScore;
+                state.scoreTable[i].status = true;
+                state.scoreTable[i].score = state.scoreTable[i].potentialScore;
             
+
+
         },
         diceSingleCombos(state) {
             for (let i = 0; i < state.dices.length; i++) {
                 const element = state.dices[i];
-                if (state.dices[i].roll === 1 && state.scoreTable[0] === false) {
+                if (state.dices[i].roll === 1 && state.scoreTable[0].status === false) {
                     state.scoreTable[0].potentialScore += 1
                 }
-                if (state.dices[i].roll === 2 && state.scoreTable[1] === false) {
+                if (state.dices[i].roll === 2 && state.scoreTable[1].status === false) {
                     state.scoreTable[1].potentialScore += 2
                 }
-                if (state.dices[i].roll === 3 && state.scoreTable[2] === false) {
+                if (state.dices[i].roll === 3 && state.scoreTable[2].status === false) {
                     state.scoreTable[2].potentialScore += 3
                 }
-                if (state.dices[i].roll === 4 && state.scoreTable[3] === false) {
+                if (state.dices[i].roll === 4 && state.scoreTable[3].status === false) {
                     state.scoreTable[3].potentialScore += 4
                 }
-                if (state.dices[i].roll === 5 && state.scoreTable[4] === false) {
+                if (state.dices[i].roll === 5 && state.scoreTable[4].status === false) {
                     state.scoreTable[4].potentialScore += 5
                 }
-                if (state.dices[i].roll === 6 && state.scoreTable[5] === false) {
+                if (state.dices[i].roll === 6 && state.scoreTable[5].status === false) {
                     state.scoreTable[5].potentialScore += 6
                 }
             }
@@ -102,12 +104,32 @@ const store = new Vuex.Store({
     }
 })
 
+Vue.component('scorecontainer', {
+    props: [],
+    template: `
+        <div>
+        <a @click="chooseSingle"> {{this.$store.state.scoreTable[0].potentialScore}} </a>
+        <a> {{this.$store.state.scoreTable[1].potentialScore}} </a>
+        <a> {{this.$store.state.scoreTable[2].potentialScore}} </a>
+        <a> {{this.$store.state.scoreTable[3].potentialScore}} </a>
+        <a> {{this.$store.state.scoreTable[4].potentialScore}} </a>
+        <a> {{this.$store.state.scoreTable[5].potentialScore}} </a>
+        </div>
+    `,
+    methods: {
+        chooseSingle: function () {
+            store.commit('chooseOnes')
+        }
+    }
+})
+
 Vue.component('rolldicecomponent', {
     props: [],
     data: timesRolled = 0,
     template: `
        <div>
        <a class="button" @click="diceRoll">Click me to roll dice</a>
+       
        </div>
        `,
     methods: {
@@ -158,7 +180,7 @@ Vue.component('dice', {
 
         },
         //Generates an image of the dice depending on the value that is randomly generated 
-        
+
     },
     computed: {
         generateImage: function () {

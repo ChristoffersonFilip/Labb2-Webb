@@ -17,13 +17,16 @@
         <rolldicecomponent>
 
         </rolldicecomponent>
+        <scorecontainer>
+
+        </scorecontainer>
         <div class="diceContainer">
         <dice 
         dices="dices"
         v-for="(dice, index) in dices"
         v-bind:dice="dices[index]"
         v-bind:key="index"
-        v-bind:index="index">
+        v-bind:index="index" id="dice">
         </dice>
         </div>
         
