@@ -2,6 +2,11 @@ Vue.config.devtools = true;
 
 const store = new Vuex.Store({
     state: {
+        players: [{
+            name: 'Player One',
+            totalScore: 0,
+            singlesScore: 0
+        }],
         dices: [{
                 name: 'diceOne',
                 roll: 0,
@@ -28,49 +33,73 @@ const store = new Vuex.Store({
                 hold: false
             }
         ],
+        sortedDice: [{
+
+        }],
         scoreTable: [{
-            name: 'ones',
+            name: 'Ones',
             score: 0,
             status: false,
             potentialScore: 0
         }, {
-            name: 'twos',
+            name: 'Twos',
             score: 0,
             status: false,
             potentialScore: 0
         }, {
-            name: 'threes',
+            name: 'Threes',
             score: 0,
             status: false,
             potentialScore: 0
         }, {
-            name: 'fours',
+            name: 'Fours',
             score: 0,
             status: false,
             potentialScore: 0
         }, {
-            name: 'fives',
+            name: 'Fives',
             score: 0,
             status: false,
             potentialScore: 0
         }, {
-            name: 'sixes',
+            name: 'Sixes',
             score: 0,
             status: false,
             potentialScore: 0
-        }]
+        }, {
+            name: 'Bonus',
+            score: 0,
+            potentialScore: 0,
+            status: false,
+        }],
     },
     mutations: {
         selectDice(state, index) {
             state.dices[index].hold = !state.dices[index].hold
         },
-        chooseOnes(state) {
-                state.scoreTable[i].status = true;
-                state.scoreTable[i].score = state.scoreTable[i].potentialScore;
-            
-
-
+        sortDice(state){
+            state.dices.sort();
         },
+        chooseOnes(state, index) {
+            if (state.scoreTable[index].status === false) {
+                state.scoreTable[index].status = true;
+                state.scoreTable[index].score = state.scoreTable[index].potentialScore;
+                state.players[0].singlesScore += state.scoreTable[index].score;
+            }
+        },
+        handleTotalScore(state) {
+                state.players[0].totalScore += state.players[0].singlesScore;
+        },
+        activateBonus(state) {
+            if (state.players[0].singlesScore >= 63) {
+                state.scoreTable[6].status = true;
+                state.scoreTable[6].score = 50;
+                state.scoreTable[6].potentialScore = 50;
+                state.players[0].singlesScore += state.scoreTable[6].score;
+                state.players[0].totalScore += state.scoreTable[6].score;
+            }
+        },
+
         diceSingleCombos(state) {
             for (let i = 0; i < state.dices.length; i++) {
                 const element = state.dices[i];
@@ -105,20 +134,19 @@ const store = new Vuex.Store({
 })
 
 Vue.component('scorecontainer', {
-    props: [],
+    props: ['index'],
     template: `
         <div>
-        <a @click="chooseSingle"> {{this.$store.state.scoreTable[0].potentialScore}} </a>
-        <a> {{this.$store.state.scoreTable[1].potentialScore}} </a>
-        <a> {{this.$store.state.scoreTable[2].potentialScore}} </a>
-        <a> {{this.$store.state.scoreTable[3].potentialScore}} </a>
-        <a> {{this.$store.state.scoreTable[4].potentialScore}} </a>
-        <a> {{this.$store.state.scoreTable[5].potentialScore}} </a>
+        <p @click="chooseSingle(index)" v-for="value, index in $store.state.scoreTable">{{ value.name }}: {{ value.potentialScore }}</p>
+        <p v-for="player, index in $store.state.players"> {{player.name}}: Singles Score: {{player.singlesScore}} </p>
+        <p v-for="player, index in $store.state.players">{{player.name}} Total Score: {{player.totalScore}} </p>
         </div>
     `,
     methods: {
-        chooseSingle: function () {
-            store.commit('chooseOnes')
+        chooseSingle: function (index) {
+            store.commit('chooseOnes', index);
+            store.commit('activateBonus');
+            store.commit('handleTotalScore', index)
         }
     }
 })
@@ -129,7 +157,6 @@ Vue.component('rolldicecomponent', {
     template: `
        <div>
        <a class="button" @click="diceRoll">Click me to roll dice</a>
-       
        </div>
        `,
     methods: {
@@ -153,8 +180,9 @@ Vue.component('rolldicecomponent', {
                 }
 
             }
-            store.commit('diceSingleCombos')
-            timesRolled += 1
+            store.commit('sortDice');
+            store.commit('diceSingleCombos');
+            timesRolled += 1;
             if (timesRolled === 4) {
                 timesRolled = 1
             }
