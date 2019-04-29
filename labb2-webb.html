@@ -21,13 +21,14 @@
 
         </scorecontainer>
         <div class="diceContainer">
+        <div v-for="(dice, index) in dices">
         <dice 
         dices="dices"
-        v-for="(dice, index) in dices"
         v-bind:dice="dices[index]"
         v-bind:key="index"
         v-bind:index="index" id="dice">
         </dice>
+        </div>
         </div>
         
     </div>
