@@ -71,14 +71,38 @@ const store = new Vuex.Store({
             score: 0,
             potentialScore: 0,
             status: false,
+        }, {
+            name: 'Pair',
+            score: 0,
+            potentialScore: 0,
+            status: false
+        }, {
+            name: 'Three of a kind',
+            score: 0,
+            potentialScore: 0,
+            status: false
+        }, {
+            name: 'Four of a kind',
+            score: 0,
+            potentialScore: 0,
+            status: false
+        }, {
+            name: 'Yatzy',
+            score: 0,
+            potentialScore: 0,
+            status: false
         }],
     },
     mutations: {
         selectDice(state, index) {
             state.dices[index].hold = !state.dices[index].hold
         },
-        sortDice(state){
-            state.dices.sort();
+        sortDice(state) {
+            state.sortedDice = [];
+            for (var i = state.dices.length - 1; i >= 0; i--) {
+                state.sortedDice.push(state.dices[i].roll);
+            }
+            state.sortedDice.sort();
         },
         chooseOnes(state, index) {
             if (state.scoreTable[index].status === false) {
@@ -88,7 +112,8 @@ const store = new Vuex.Store({
             }
         },
         handleTotalScore(state) {
-                state.players[0].totalScore += state.players[0].singlesScore;
+            state.players[0].totalScore = 0;
+            state.players[0].totalScore += state.players[0].singlesScore;
         },
         activateBonus(state) {
             if (state.players[0].singlesScore >= 63) {
@@ -101,35 +126,58 @@ const store = new Vuex.Store({
         },
 
         diceSingleCombos(state) {
-            for (let i = 0; i < state.dices.length; i++) {
-                const element = state.dices[i];
-                if (state.dices[i].roll === 1 && state.scoreTable[0].status === false) {
+            for (let i = 0; i < state.sortedDice.length; i++) {
+                const element = state.sortedDice[i];
+                if (state.sortedDice[i] === 1 && state.scoreTable[0].status === false) {
                     state.scoreTable[0].potentialScore += 1
                 }
-                if (state.dices[i].roll === 2 && state.scoreTable[1].status === false) {
+                if (state.sortedDice[i] === 2 && state.scoreTable[1].status === false) {
                     state.scoreTable[1].potentialScore += 2
                 }
-                if (state.dices[i].roll === 3 && state.scoreTable[2].status === false) {
+                if (state.sortedDice[i] === 3 && state.scoreTable[2].status === false) {
                     state.scoreTable[2].potentialScore += 3
                 }
-                if (state.dices[i].roll === 4 && state.scoreTable[3].status === false) {
+                if (state.sortedDice[i] === 4 && state.scoreTable[3].status === false) {
                     state.scoreTable[3].potentialScore += 4
                 }
-                if (state.dices[i].roll === 5 && state.scoreTable[4].status === false) {
+                if (state.sortedDice[i] === 5 && state.scoreTable[4].status === false) {
                     state.scoreTable[4].potentialScore += 5
                 }
-                if (state.dices[i].roll === 6 && state.scoreTable[5].status === false) {
+                if (state.sortedDice[i] === 6 && state.scoreTable[5].status === false) {
                     state.scoreTable[5].potentialScore += 6
                 }
             }
         },
-        singlePair(state) {
-            for (let i = 0; i < state.dices.length; i++) {
-                const element = state.dices[i];
+        pair(state) {
+            for (let i = 4; i > 0; i--) {
+                const element = state.sortedDice[i];
+                if (state.sortedDice[i] === state.sortedDice[i - 1]) {
+                    state.scoreTable[7].potentialScore = state.sortedDice[i] * 2;
+                }
+            }
+        },
+        threeOfaKind(state) {
+            for (let i = 4; i > 1; i--) {
+                const element = state.sortedDice[i];
+                if (state.sortedDice[i] === state.sortedDice[i - 2]) {
+                    state.scoreTable[8].status = true;
+                    state.scoreTable[8].potentialScore = state.sortedDice[i] * 3;
+                }
+            }
+        },
 
-
+    
+    fourOfAKind(state) {
+        for (let i = 4; i > 2; i--) {
+            const element = state.sortedDice[i];
+            if (state.sortedDice[i] === state.sortedDice[i - 3]) {
+                state.scoreTable[9].potentialScore = state.sortedDice[i] * 4;
             }
         }
+    },
+    fullhouse(){
+
+    }
     }
 })
 
@@ -138,7 +186,7 @@ Vue.component('scorecontainer', {
     template: `
         <div>
         <p @click="chooseSingle(index)" v-for="value, index in $store.state.scoreTable">{{ value.name }}: {{ value.potentialScore }}</p>
-        <p v-for="player, index in $store.state.players"> {{player.name}}: Singles Score: {{player.singlesScore}} </p>
+        <p v-for="player, index in $store.state.players"> {{player.name}} Singles Score: {{player.singlesScore}} </p>
         <p v-for="player, index in $store.state.players">{{player.name}} Total Score: {{player.totalScore}} </p>
         </div>
     `,
@@ -169,8 +217,15 @@ Vue.component('rolldicecomponent', {
 
             }
         },
+        checkForScores: function(){
+            store.commit('diceSingleCombos');
+            store.commit('pair');
+            store.commit('threeOfaKind');
+            store.commit('fourOfAKind');
+        },
         diceRoll: function () {
-            this.resetScore()
+            this.resetScore();
+            
             for (let i = 0; i < this.$store.state.dices.length; i++) {
 
                 const element = this.$store.state.dices[i];
@@ -181,7 +236,9 @@ Vue.component('rolldicecomponent', {
 
             }
             store.commit('sortDice');
-            store.commit('diceSingleCombos');
+            this.checkForScores();
+            
+            
             timesRolled += 1;
             if (timesRolled === 4) {
                 timesRolled = 1
