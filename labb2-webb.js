@@ -2,6 +2,11 @@ Vue.config.devtools = true;
 
 const store = new Vuex.Store({
     state: {
+        players: [{
+            name: 'Player One',
+            totalScore: 0,
+            singlesScore: 0
+        }],
         dices: [{
                 name: 'diceOne',
                 roll: 0,
@@ -28,76 +33,164 @@ const store = new Vuex.Store({
                 hold: false
             }
         ],
+        sortedDice: [{
+
+        }],
         scoreTable: [{
-            name: 'ones',
+            name: 'Ones',
             score: 0,
             status: false,
             potentialScore: 0
         }, {
-            name: 'twos',
+            name: 'Twos',
             score: 0,
             status: false,
             potentialScore: 0
         }, {
-            name: 'threes',
+            name: 'Threes',
             score: 0,
             status: false,
             potentialScore: 0
         }, {
-            name: 'fours',
+            name: 'Fours',
             score: 0,
             status: false,
             potentialScore: 0
         }, {
-            name: 'fives',
+            name: 'Fives',
             score: 0,
             status: false,
             potentialScore: 0
         }, {
-            name: 'sixes',
+            name: 'Sixes',
             score: 0,
             status: false,
             potentialScore: 0
+        }, {
+            name: 'Bonus',
+            score: 0,
+            potentialScore: 0,
+            status: false,
+        }, {
+            name: 'Pair',
+            score: 0,
+            potentialScore: 0,
+            status: false
+        }, {
+            name: 'Three of a kind',
+            score: 0,
+            potentialScore: 0,
+            status: false
+        }, {
+            name: 'Four of a kind',
+            score: 0,
+            potentialScore: 0,
+            status: false
+        }, {
+            name: 'Full house',
+            score: 0,
+            potentialScore: 0,
+            status: false
+
         }]
     },
     mutations: {
         selectDice(state, index) {
             state.dices[index].hold = !state.dices[index].hold
         },
-        chooseOnes(state) {
-                state.scoreTable[0].status = true;
-                state.scoreTable[0].score = state.scoreTable[0].potentialScore;
-            
-
-
+        sortDice(state) {
+            state.sortedDice = [];
+            for (var i = state.dices.length - 1; i >= 0; i--) {
+                state.sortedDice.push(state.dices[i].roll);
+            }
+            state.sortedDice.sort();
         },
+        chooseOnes(state, index) {
+            if (state.scoreTable[index].status === false) {
+                state.scoreTable[index].status = true;
+                state.scoreTable[index].score = state.scoreTable[index].potentialScore;
+                state.players[0].singlesScore += state.scoreTable[index].score;
+            }
+        },
+        handleTotalScore(state) {
+            state.players[0].totalScore = 0;
+            state.players[0].totalScore += state.players[0].singlesScore;
+        },
+        activateBonus(state) {
+            if (state.players[0].singlesScore >= 63) {
+                state.scoreTable[6].status = true;
+                state.scoreTable[6].score = 50;
+                state.scoreTable[6].potentialScore = 50;
+                state.players[0].singlesScore += state.scoreTable[6].score;
+                state.players[0].totalScore += state.scoreTable[6].score;
+            }
+        },
+
         diceSingleCombos(state) {
-            for (let i = 0; i < state.dices.length; i++) {
-                const element = state.dices[i];
-                if (state.dices[i].roll === 1 && state.scoreTable[0].status === false) {
+            for (let i = 0; i < state.sortedDice.length; i++) {
+                const element = state.sortedDice[i];
+                if (state.sortedDice[i] === 1 && state.scoreTable[0].status === false) {
                     state.scoreTable[0].potentialScore += 1
                 }
-                if (state.dices[i].roll === 2 && state.scoreTable[1].status === false) {
+                if (state.sortedDice[i] === 2 && state.scoreTable[1].status === false) {
                     state.scoreTable[1].potentialScore += 2
                 }
-                if (state.dices[i].roll === 3 && state.scoreTable[2].status === false) {
+                if (state.sortedDice[i] === 3 && state.scoreTable[2].status === false) {
                     state.scoreTable[2].potentialScore += 3
                 }
-                if (state.dices[i].roll === 4 && state.scoreTable[3].status === false) {
+                if (state.sortedDice[i] === 4 && state.scoreTable[3].status === false) {
                     state.scoreTable[3].potentialScore += 4
                 }
-                if (state.dices[i].roll === 5 && state.scoreTable[4].status === false) {
+                if (state.sortedDice[i] === 5 && state.scoreTable[4].status === false) {
                     state.scoreTable[4].potentialScore += 5
                 }
-                if (state.dices[i].roll === 6 && state.scoreTable[5].status === false) {
+                if (state.sortedDice[i] === 6 && state.scoreTable[5].status === false) {
                     state.scoreTable[5].potentialScore += 6
                 }
             }
         },
-        singlePair(state) {
-            for (let i = 0; i < state.dices.length; i++) {
-                const element = state.dices[i];
+        pair(state) {
+            for (let i = 4; i > 0; i--) {
+                const element = state.sortedDice[i];
+                if (state.sortedDice[i] === state.sortedDice[i - 1] && state.scoreTable[6].status === false) {
+                    state.scoreTable[6].potentialScore = state.sortedDice[i] * 2;
+                    state.scoreTable[6].score = state.scoreTable[6].potentialScore;
+                }
+            }
+        },
+        threeOfaKind(state) {
+            for (let i = 4; i > 1; i--) {
+                const element = state.sortedDice[i];
+                if (state.sortedDice[i] === state.sortedDice[i - 2] && state.scoreTable[7].status === false) {
 
+                    state.scoreTable[7].potentialScore = state.sortedDice[i] * 3;
+                    state.scoreTable[7].score = state.scoreTable[7].potentialScore;
+                }
+            }
+        },
+
+
+        fourOfAKind(state) {
+            for (let i = 4; i > 2; i--) {
+                const element = state.sortedDice[i];
+                if (state.sortedDice[i] === state.sortedDice[i - 3] && state.scoreTable[2].status === false) {
+
+                    state.scoreTable[8].potentialScore = state.sortedDice[i] * 4;
+                    state.scoreTable[8].score = state.scoreTable[8].potentialScore;
+                }
+            }
+        },
+        fullHouse(state) {
+            for (let i = 4; i < 0; i--) {
+                const element = array[i];
+                if (state.sortedDice[i] === state.sortedDice[i - 2] && state.sortDice[i - 3] === state.sortedDice[i - 4]) {
+                    state.scoreTable[9].potentialScore = state.sortedDice[i] * 3 + state.sortedDice[i - 3] * 2;
+                    state.scoreTable[9].score = state.scoreTable[9].potentialScore;
+                }
+                if (state.sortedDice[i] === state.sortedDice[i - 1] && state.sortedDice[i - 2] === state.sortedDice[i - 4]) {
+                    state.scoreTable[9].potentialScore = state.sortedDice[i] * 2 + state.sortedDice[i - 2] * 3;
+                    state.scoreTable[9].score = state.scoreTable[9].potentialScore;
+                }
 
             }
         }
@@ -105,20 +198,22 @@ const store = new Vuex.Store({
 })
 
 Vue.component('scorecontainer', {
-    props: [],
+    props: ['index'],
     template: `
-        <div id="scoreKeeper">
-        <a @click="chooseSingle"> {{this.$store.state.scoreTable[0].potentialScore}} </a>
-        <a> {{this.$store.state.scoreTable[1].potentialScore}} </a>
-        <a> {{this.$store.state.scoreTable[2].potentialScore}} </a>
-        <a> {{this.$store.state.scoreTable[3].potentialScore}} </a>
-        <a> {{this.$store.state.scoreTable[4].potentialScore}} </a>
-        <a> {{this.$store.state.scoreTable[5].potentialScore}} </a>
+        <div>
+        <p @click="chooseSingle(index)" v-for="value, index in $store.state.scoreTable">{{ value.name }}: {{ value.potentialScore }}</p>
+        <p v-for="player, index in $store.state.players"> {{player.name}} Singles Score: {{player.singlesScore}} </p>
+        <p v-for="player, index in $store.state.players">{{player.name}} Total Score: {{player.totalScore}} </p>
         </div>
     `,
     methods: {
-        chooseSingle: function () {
-            store.commit('chooseOnes')
+        chooseSingle: function (index) {
+            store.commit('chooseOnes', index);
+            store.commit('activateBonus');
+            store.commit('handleTotalScore', index);
+        },
+        choosePairs(index) {
+            store.commit('choosePairs', index);
         }
     }
 })
@@ -129,11 +224,9 @@ Vue.component('rolldicecomponent', {
     template: `
        <div>
        <a class="button" @click="diceRoll">Click me to roll dice</a>
-       
        </div>
        `,
     methods: {
-
         resetScore: function () {
             for (let i = 0; i < this.$store.state.scoreTable.length; i++) {
                 const element = this.$store.state.scoreTable[i];
@@ -142,8 +235,16 @@ Vue.component('rolldicecomponent', {
 
             }
         },
+        checkForScores: function () {
+            store.commit('diceSingleCombos');
+            store.commit('pair');
+            store.commit('threeOfaKind');
+            store.commit('fourOfAKind');
+            store.commit('fullHouse')
+        },
         diceRoll: function () {
-            this.resetScore()
+            this.resetScore();
+
             for (let i = 0; i < this.$store.state.dices.length; i++) {
 
                 const element = this.$store.state.dices[i];
@@ -153,8 +254,11 @@ Vue.component('rolldicecomponent', {
                 }
 
             }
-            store.commit('diceSingleCombos')
-            timesRolled += 1
+            store.commit('sortDice');
+            this.checkForScores();
+
+
+            timesRolled += 1;
             if (timesRolled === 4) {
                 timesRolled = 1
             }
@@ -167,15 +271,19 @@ Vue.component('rolldicecomponent', {
 Vue.component('dice', {
     props: ['index'],
     template: `
-            <div class="dice">
-            
-                <img v-bind:src="generateImage" @click="changeHold()" alt="">
-                
+            <div>
+                <img class="dice" @click="changeHold" v-if="this.$store.state.dices[this.index].roll == 0" src="http://i.imgur.com/6knk862.png">
+                <img class="dice" @click="changeHold" v-else-if="this.$store.state.dices[this.index].roll == 1" src="http://i.imgur.com/6knk862.png">
+                <img class="dice" @click="changeHold" v-else-if="this.$store.state.dices[this.index].roll == 2" src="http://i.imgur.com/ik7dK9D.png">
+                <img class="dice" @click="changeHold" v-else-if="this.$store.state.dices[this.index].roll == 3" src="http://i.imgur.com/sh0H0td.png">
+                <img class="dice" @click="changeHold" v-else-if="this.$store.state.dices[this.index].roll == 4" src="http://i.imgur.com/1GPkhq3.png">
+                <img class="dice" @click="changeHold" v-else-if="this.$store.state.dices[this.index].roll == 5" src="http://i.imgur.com/bINitmy.png">
+                <img class="dice" @click="changeHold" v-else-if="this.$store.state.dices[this.index].roll == 6" src="http://i.imgur.com/6qXMSrt.png">
             </div>
             
         `,
     methods: {
-        
+
 
         changeHold: function () {
             store.commit('selectDice', this.index)
@@ -213,9 +321,9 @@ Vue.component('dice', {
             }
             return "http://i.imgur.com/6knk862.png";
         }
-        
+
     }
-    
+
 })
 
 const app = new Vue({
