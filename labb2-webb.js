@@ -91,8 +91,22 @@ const store = new Vuex.Store({
             score: 0,
             potentialScore: 0,
             status: false
-
-        }]
+        },{
+            name: 'Small straight',
+            score: 0,
+            potentialScore: 0,
+            status: false
+        }, {
+            name: 'Large straight',
+            score: 0,
+            potentialScore: 0,
+            status: false
+        }, {
+            name: 'Yatzy',
+            score: 0,
+            potentialScore: 0,
+            status: false
+        } ]
     },
     mutations: {
         selectDice(state, index) {
@@ -110,6 +124,9 @@ const store = new Vuex.Store({
                 state.scoreTable[index].status = true;
                 state.scoreTable[index].score = state.scoreTable[index].potentialScore;
                 state.players[0].singlesScore += state.scoreTable[index].score;
+                state.scoreTable[index].potentialScore = state.scoreTable[index].score;
+                console.log(index);
+                console.log(state.scoreTable[index].status)
             }
         },
         handleTotalScore(state) {
@@ -149,51 +166,78 @@ const store = new Vuex.Store({
                 }
             }
         },
+
         pair(state) {
             for (let i = 4; i > 0; i--) {
                 const element = state.sortedDice[i];
-                if (state.sortedDice[i] === state.sortedDice[i - 1] && state.scoreTable[6].status === false) {
-                    state.scoreTable[6].potentialScore = state.sortedDice[i] * 2;
-                    state.scoreTable[6].score = state.scoreTable[6].potentialScore;
-                }
-            }
-        },
-        threeOfaKind(state) {
-            for (let i = 4; i > 1; i--) {
-                const element = state.sortedDice[i];
-                if (state.sortedDice[i] === state.sortedDice[i - 2] && state.scoreTable[7].status === false) {
-
-                    state.scoreTable[7].potentialScore = state.sortedDice[i] * 3;
+                if (state.sortedDice[i] === state.sortedDice[i - 1] && state.scoreTable[8].status === false) {
+                    state.scoreTable[7].potentialScore = state.sortedDice[i] * 2;
                     state.scoreTable[7].score = state.scoreTable[7].potentialScore;
                 }
             }
+
         },
 
+
+
+        threeOfaKind(state) {
+            
+            if ((state.sortedDice[4] === state.sortedDice[2]) || (state.sortedDice[0] === state.sortedDice[2]) || (state.sortedDice[1] === state.sortedDice[3]) && (state.scoreTable[8].status === false)) {
+
+                state.scoreTable[8].potentialScore = state.sortedDice[2] * 3;
+                state.scoreTable[8].score = state.scoreTable[8].potentialScore;
+                console.log('three of a kind');
+            }
+
+        },
 
         fourOfAKind(state) {
-            for (let i = 4; i > 2; i--) {
-                const element = state.sortedDice[i];
-                if (state.sortedDice[i] === state.sortedDice[i - 3] && state.scoreTable[2].status === false) {
-
-                    state.scoreTable[8].potentialScore = state.sortedDice[i] * 4;
-                    state.scoreTable[8].score = state.scoreTable[8].potentialScore;
-                }
+            if ((state.sortedDice[4] === state.sortedDice[1]) || (state.sortedDice[0] === state.sortedDice[3]) && (state.scoreTable[9].status === false)) {
+                state.scoreTable[9].potentialScore = state.sortedDice[2] * 4;
+                state.scoreTable[9].score = state.scoreTable[9].potentialScore;
+                console.log('four of a kind')
             }
         },
+
         fullHouse(state) {
-            for (let i = 4; i < 0; i--) {
-                const element = array[i];
-                if (state.sortedDice[i] === state.sortedDice[i - 2] && state.sortDice[i - 3] === state.sortedDice[i - 4]) {
-                    state.scoreTable[9].potentialScore = state.sortedDice[i] * 3 + state.sortedDice[i - 3] * 2;
-                    state.scoreTable[9].score = state.scoreTable[9].potentialScore;
-                }
-                if (state.sortedDice[i] === state.sortedDice[i - 1] && state.sortedDice[i - 2] === state.sortedDice[i - 4]) {
-                    state.scoreTable[9].potentialScore = state.sortedDice[i] * 2 + state.sortedDice[i - 2] * 3;
-                    state.scoreTable[9].score = state.scoreTable[9].potentialScore;
-                }
+            if ((state.sortedDice[0] === state.sortedDice[2]) && (state.sortedDice[3] === state.sortedDice[4]) && state.scoreTable[10].status === false) {
+                if ((state.sortedDice[2] === state.sortedDice[1] || state.sortedDice[2] === state.sortedDice[3]) && state.sortedDice[0] != state.sortedDice[4])
+                    console.log('full house')
+                state.scoreTable[10].potentialScore = state.sortedDice[2] * 3 + state.sortedDice[3] * 2;
+                state.scoreTable[10].score = state.scoreTable[10].potentialScore;
 
             }
+            if ((state.sortedDice[0] === state.sortedDice[1]) && (state.sortedDice[2] === state.sortedDice[4]) && state.scoreTable[10].status === false) {
+                if ((state.sortedDice[3] === state.sortedDice[2] || state.sortedDice[3] === state.sortedDice[4]) && state.sortedDice[0] != state.sortedDice[4])
+                    console.log('full house')
+                state.scoreTable[10].potentialScore = state.sortedDice[1] * 2 + state.sortedDice[3] * 3;
+                state.scoreTable[10].score = state.scoreTable[10].potentialScore;
+
+            }
+        },
+        smallStraight(state){
+            if(state.sortedDice[0] === 1 && state.sortedDice[1] === 2 && state.sortedDice[2] === 3 && state.sortedDice[3] === 4 && state.sortedDice[4] === 5 && state.scoreTable[11].status === false){
+                console.log('Small straight')
+                state.scoreTable[11].potentialScore = 15;
+                state.scoreTable[11].score = state.scoreTable[11].potentialScore;
+                
+            }
+        },
+        largeStraight(state){
+            if(state.sortedDice[0] === 2 && state.sortedDice[1] === 3 && state.sortedDice[2] === 4 && state.sortedDice[3] === 5 && state.sortedDice[4] === 6 && state.scoreTable[11].status === false){
+                console.log('Large straight')
+                state.scoreTable[12].potentialScore = 20;
+                state.scoreTable[12].score = state.scoreTable[12].potentialScore;
+            }
+        },
+        yatzy(state){
+            if(state.sortedDice[0] === state.sortedDice[4] && state.scoreTable[13].status === false){
+                console.log('yatzy');
+                state.scoreTable[13].potentialScore = 50;
+                state.scoretable[13].score = state.scoretable[13].potentialScore;
+            }
         }
+    
     }
 })
 
@@ -212,9 +256,7 @@ Vue.component('scorecontainer', {
             store.commit('activateBonus');
             store.commit('handleTotalScore', index);
         },
-        choosePairs(index) {
-            store.commit('choosePairs', index);
-        }
+
     }
 })
 
@@ -240,7 +282,10 @@ Vue.component('rolldicecomponent', {
             store.commit('pair');
             store.commit('threeOfaKind');
             store.commit('fourOfAKind');
-            store.commit('fullHouse')
+            store.commit('fullHouse');
+            store.commit('smallStraight');
+            store.commit('largeStraight');
+            store.commit('yatzy');
         },
         diceRoll: function () {
             this.resetScore();
