@@ -71,7 +71,8 @@ const store = new Vuex.Store({
             score: 0,
             potentialScore: 0,
             status: false,
-        }, {
+            
+        
             name: 'Pair',
             score: 0,
             potentialScore: 0,
@@ -87,11 +88,12 @@ const store = new Vuex.Store({
             potentialScore: 0,
             status: false
         }, {
-            name: 'Yatzy',
+            name: 'Full house',
             score: 0,
             potentialScore: 0,
             status: false
-        }],
+        
+        }]
     },
     mutations: {
         selectDice(state, index) {
@@ -151,33 +153,48 @@ const store = new Vuex.Store({
         pair(state) {
             for (let i = 4; i > 0; i--) {
                 const element = state.sortedDice[i];
-                if (state.sortedDice[i] === state.sortedDice[i - 1]) {
-                    state.scoreTable[7].potentialScore = state.sortedDice[i] * 2;
+                if (state.sortedDice[i] === state.sortedDice[i - 1] && state.scoreTable[6].status === false) {
+                    state.scoreTable[6].potentialScore = state.sortedDice[i] * 2;
+                    state.scoreTable[6].score = state.scoreTable[6].potentialScore;
                 }
             }
         },
         threeOfaKind(state) {
             for (let i = 4; i > 1; i--) {
                 const element = state.sortedDice[i];
-                if (state.sortedDice[i] === state.sortedDice[i - 2]) {
-                    state.scoreTable[8].status = true;
-                    state.scoreTable[8].potentialScore = state.sortedDice[i] * 3;
+                if (state.sortedDice[i] === state.sortedDice[i - 2] && state.scoreTable[7].status === false) {
+
+                    state.scoreTable[7].potentialScore = state.sortedDice[i] * 3;
+                    state.scoreTable[7].score = state.scoreTable[7].potentialScore;
                 }
             }
         },
 
-    
-    fourOfAKind(state) {
-        for (let i = 4; i > 2; i--) {
-            const element = state.sortedDice[i];
-            if (state.sortedDice[i] === state.sortedDice[i - 3]) {
-                state.scoreTable[9].potentialScore = state.sortedDice[i] * 4;
+
+        fourOfAKind(state) {
+            for (let i = 4; i > 2; i--) {
+                const element = state.sortedDice[i];
+                if (state.sortedDice[i] === state.sortedDice[i - 3] && state.scoreTable[2].status === false) {
+
+                    state.scoreTable[8].potentialScore = state.sortedDice[i] * 4;
+                    state.scoreTable[8].score = state.scoreTable[8].potentialScore;
+                }
+            }
+        },
+        fullHouse(state) {
+            for (let i = 4; i < 0; i--) {
+                const element = array[i];
+                if (state.sortedDice[i] === state.sortedDice[i - 2] && state.sortDice[i - 3] === state.sortedDice[i - 4]) {
+                    state.scoreTable[9].potentialScore = state.sortedDice[i] * 3 + state.sortedDice[i - 3] * 2;
+                    state.scoreTable[9].score = state.scoreTable[9].potentialScore;
+                }
+                if (state.sortedDice[i] === state.sortedDice[i - 1] && state.sortedDice[i - 2] === state.sortedDice[i - 4]) {
+                    state.scoreTable[9].potentialScore = state.sortedDice[i] * 2 + state.sortedDice[i - 2] * 3;
+                    state.scoreTable[9].score = state.scoreTable[9].potentialScore;
+                }
+
             }
         }
-    },
-    fullhouse(){
-
-    }
     }
 })
 
@@ -194,7 +211,10 @@ Vue.component('scorecontainer', {
         chooseSingle: function (index) {
             store.commit('chooseOnes', index);
             store.commit('activateBonus');
-            store.commit('handleTotalScore', index)
+            store.commit('handleTotalScore', index);
+        },
+        choosePairs(index){
+            store.commit('choosePairs', index);
         }
     }
 })
@@ -208,7 +228,6 @@ Vue.component('rolldicecomponent', {
        </div>
        `,
     methods: {
-
         resetScore: function () {
             for (let i = 0; i < this.$store.state.scoreTable.length; i++) {
                 const element = this.$store.state.scoreTable[i];
@@ -217,11 +236,12 @@ Vue.component('rolldicecomponent', {
 
             }
         },
-        checkForScores: function(){
+        checkForScores: function () {
             store.commit('diceSingleCombos');
             store.commit('pair');
             store.commit('threeOfaKind');
             store.commit('fourOfAKind');
+            store.commit('fullHouse')
         },
         diceRoll: function () {
             this.resetScore();
@@ -237,8 +257,8 @@ Vue.component('rolldicecomponent', {
             }
             store.commit('sortDice');
             this.checkForScores();
-            
-            
+
+
             timesRolled += 1;
             if (timesRolled === 4) {
                 timesRolled = 1
