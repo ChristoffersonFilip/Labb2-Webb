@@ -65,8 +65,8 @@ const store = new Vuex.Store({
             state.dices[index].hold = !state.dices[index].hold
         },
         chooseOnes(state) {
-                state.scoreTable[i].status = true;
-                state.scoreTable[i].score = state.scoreTable[i].potentialScore;
+                state.scoreTable[0].status = true;
+                state.scoreTable[0].score = state.scoreTable[0].potentialScore;
             
 
 
@@ -107,7 +107,7 @@ const store = new Vuex.Store({
 Vue.component('scorecontainer', {
     props: [],
     template: `
-        <div>
+        <div id="scoreKeeper">
         <a @click="chooseSingle"> {{this.$store.state.scoreTable[0].potentialScore}} </a>
         <a> {{this.$store.state.scoreTable[1].potentialScore}} </a>
         <a> {{this.$store.state.scoreTable[2].potentialScore}} </a>
@@ -167,12 +167,15 @@ Vue.component('rolldicecomponent', {
 Vue.component('dice', {
     props: ['index'],
     template: `
-            <div>
-                <img class="dice" v-bind:src="generateImage" @click="changeHold()" alt="">
+            <div class="dice">
+            
+                <img v-bind:src="generateImage" @click="changeHold()" alt="">
+                
             </div>
+            
         `,
     methods: {
-        //Loops through the store dice objects and gives them all a new random value from 1 - 6
+        
 
         changeHold: function () {
             store.commit('selectDice', this.index)
@@ -210,7 +213,9 @@ Vue.component('dice', {
             }
             return "http://i.imgur.com/6knk862.png";
         }
+        
     }
+    
 })
 
 const app = new Vue({

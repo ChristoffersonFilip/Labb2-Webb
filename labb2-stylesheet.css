@@ -1,11 +1,21 @@
-
-.diceContainer{
+#app{
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    grid-template-rows: repeat(4, 1fr);
+    grid-template-rows: repeat(5, 1fr);
 }
+
+
 
 #dice{
     grid-row: 4;
-    grid-column: 1 / span 5;
+    grid-column: 1;
+    width: 50%;
+    height: 50;
+}
+
+
+
+#scoreKeeper{
+    grid-row: 2;
+    grid-column: 1 / span 2;
 }
