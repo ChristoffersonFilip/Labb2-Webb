@@ -71,42 +71,43 @@ const store = new Vuex.Store({
             score: 0,
             potentialScore: 0,
             status: false,
-        }, {
+        }],
+        multiScoreTable: [{
             name: 'Pair',
-            score: 0,
-            potentialScore: 0,
+            multiScore: 0,
+            potentialMultiScore: 0,
             status: false
         }, {
             name: 'Three of a kind',
-            score: 0,
-            potentialScore: 0,
+            multiScore: 0,
+            potentialMultiScore: 0,
             status: false
         }, {
             name: 'Four of a kind',
-            score: 0,
+            multiScore: 0,
             potentialScore: 0,
             status: false
         }, {
             name: 'Full house',
-            score: 0,
-            potentialScore: 0,
+            multiScore: 0,
+            potentialMultiScore: 0,
             status: false
-        },{
+        }, {
             name: 'Small straight',
-            score: 0,
-            potentialScore: 0,
+            multiScore: 0,
+            potentialMultiScore: 0,
             status: false
         }, {
             name: 'Large straight',
-            score: 0,
-            potentialScore: 0,
+            multiScore: 0,
+            potentialMultiScore: 0,
             status: false
         }, {
             name: 'Yatzy',
-            score: 0,
-            potentialScore: 0,
+            multiScore: 0,
+            potentialMultiScore: 0,
             status: false
-        } ]
+        }]
     },
     mutations: {
         selectDice(state, index) {
@@ -124,14 +125,22 @@ const store = new Vuex.Store({
                 state.scoreTable[index].status = true;
                 state.scoreTable[index].score = state.scoreTable[index].potentialScore;
                 state.players[0].singlesScore += state.scoreTable[index].score;
-                state.scoreTable[index].potentialScore = state.scoreTable[index].score;
-                console.log(index);
-                console.log(state.scoreTable[index].status)
+                
+                console.log('singlechoice');
             }
         },
-        handleTotalScore(state) {
-            state.players[0].totalScore = 0;
-            state.players[0].totalScore += state.players[0].singlesScore;
+        chooseMulti(state, index) {
+            if (state.multiScoreTable[index].status === false) {
+                state.multiScoreTable[index].status = true;
+                state.multiScoreTable[index].multiScore = state.multiScoreTable[index].potentialMultiScore;
+
+                console.log('multichoice');
+            }
+        },
+        handleTotalScore(state, index) {
+            //state.players[0].totalScore += state.players[0].singlesScore;
+            
+            state.players[0].totalScore += state.multiScoreTable[index].multiScore + state.scoreTable[index].score;
         },
         activateBonus(state) {
             if (state.players[0].singlesScore >= 63) {
@@ -168,12 +177,24 @@ const store = new Vuex.Store({
         },
 
         pair(state) {
-            for (let i = 4; i > 0; i--) {
-                const element = state.sortedDice[i];
-                if (state.sortedDice[i] === state.sortedDice[i - 1] && state.scoreTable[8].status === false) {
-                    state.scoreTable[7].potentialScore = state.sortedDice[i] * 2;
-                    state.scoreTable[7].score = state.scoreTable[7].potentialScore;
-                }
+            if (state.sortedDice[0] === state.sortedDice[1] && state.multiScoreTable[0].status === false) {
+                console.log('pair')
+                state.multiScoreTable[0].potentialMultiScore = state.sortedDice[0] * 2;
+            }
+            if (state.sortedDice[1] === state.sortedDice[2] && state.multiScoreTable[0].status === false) {
+                console.log('pair')
+                state.multiScoreTable[0].potentialMultiScore = state.sortedDice[1] * 2;
+
+            }
+            if (state.sortedDice[2] === state.sortedDice[3] && state.multiScoreTable[0].status === false) {
+                console.log('pair')
+                state.multiScoreTable[0].potentialMultiScore = state.sortedDice[2] * 2;
+
+            }
+            if (state.sortedDice[3] === state.sortedDice[4] && state.multiScoreTable[0].status === false) {
+                console.log('pair')
+                state.multiScoreTable[0].potentialMultiScore = state.sortedDice[4] * 2;
+
             }
 
         },
@@ -181,63 +202,55 @@ const store = new Vuex.Store({
 
 
         threeOfaKind(state) {
-            
-            if ((state.sortedDice[4] === state.sortedDice[2]) || (state.sortedDice[0] === state.sortedDice[2]) || (state.sortedDice[1] === state.sortedDice[3]) && (state.scoreTable[8].status === false)) {
 
-                state.scoreTable[8].potentialScore = state.sortedDice[2] * 3;
-                state.scoreTable[8].score = state.scoreTable[8].potentialScore;
+            if ((state.sortedDice[4] === state.sortedDice[2]) || (state.sortedDice[0] === state.sortedDice[2]) || (state.sortedDice[1] === state.sortedDice[3]) && state.multiScoreTable[1].status === false) {
+
+                state.multiScoreTable[1].potentialMultiScore = state.sortedDice[2] * 3;
                 console.log('three of a kind');
             }
 
         },
 
         fourOfAKind(state) {
-            if ((state.sortedDice[4] === state.sortedDice[1]) || (state.sortedDice[0] === state.sortedDice[3]) && (state.scoreTable[9].status === false)) {
-                state.scoreTable[9].potentialScore = state.sortedDice[2] * 4;
-                state.scoreTable[9].score = state.scoreTable[9].potentialScore;
+            if ((state.sortedDice[4] === state.sortedDice[1]) || (state.sortedDice[0] === state.sortedDice[3]) && state.multiScoreTable[2].status === false) {
+                state.multiScoreTable[2].potentialMultiScore = state.sortedDice[2] * 4;
                 console.log('four of a kind')
             }
         },
 
         fullHouse(state) {
-            if ((state.sortedDice[0] === state.sortedDice[2]) && (state.sortedDice[3] === state.sortedDice[4]) && state.scoreTable[10].status === false) {
+            if ((state.sortedDice[0] === state.sortedDice[2]) && (state.sortedDice[3] === state.sortedDice[4]) && state.multiScoreTable[3].status === false) {
                 if ((state.sortedDice[2] === state.sortedDice[1] || state.sortedDice[2] === state.sortedDice[3]) && state.sortedDice[0] != state.sortedDice[4])
                     console.log('full house')
-                state.scoreTable[10].potentialScore = state.sortedDice[2] * 3 + state.sortedDice[3] * 2;
-                state.scoreTable[10].score = state.scoreTable[10].potentialScore;
+                state.multiScoreTable[3].potentialMultiScore = state.sortedDice[2] * 3 + state.sortedDice[3] * 2;
 
             }
-            if ((state.sortedDice[0] === state.sortedDice[1]) && (state.sortedDice[2] === state.sortedDice[4]) && state.scoreTable[10].status === false) {
+            if ((state.sortedDice[0] === state.sortedDice[1]) && (state.sortedDice[2] === state.sortedDice[4]) && state.multiScoreTable[3].status === false) {
                 if ((state.sortedDice[3] === state.sortedDice[2] || state.sortedDice[3] === state.sortedDice[4]) && state.sortedDice[0] != state.sortedDice[4])
                     console.log('full house')
-                state.scoreTable[10].potentialScore = state.sortedDice[1] * 2 + state.sortedDice[3] * 3;
-                state.scoreTable[10].score = state.scoreTable[10].potentialScore;
+                state.multiScoreTable[3].potentialMultiScore = state.sortedDice[1] * 2 + state.sortedDice[3] * 3;
+            }
+        },
+        smallStraight(state) {
+            if (state.sortedDice[0] === 1 && state.sortedDice[1] === 2 && state.sortedDice[2] === 3 && state.sortedDice[3] === 4 && state.sortedDice[4] === 5 && state.multiScoreTable[4].status === false) {
+                console.log('Small straight')
+                state.multiScoreTable[4].potentialMultiScore = 15;
 
             }
         },
-        smallStraight(state){
-            if(state.sortedDice[0] === 1 && state.sortedDice[1] === 2 && state.sortedDice[2] === 3 && state.sortedDice[3] === 4 && state.sortedDice[4] === 5 && state.scoreTable[11].status === false){
-                console.log('Small straight')
-                state.scoreTable[11].potentialScore = 15;
-                state.scoreTable[11].score = state.scoreTable[11].potentialScore;
-                
-            }
-        },
-        largeStraight(state){
-            if(state.sortedDice[0] === 2 && state.sortedDice[1] === 3 && state.sortedDice[2] === 4 && state.sortedDice[3] === 5 && state.sortedDice[4] === 6 && state.scoreTable[11].status === false){
+        largeStraight(state) {
+            if (state.sortedDice[0] === 2 && state.sortedDice[1] === 3 && state.sortedDice[2] === 4 && state.sortedDice[3] === 5 && state.sortedDice[4] === 6 && state.multiScoreTable[5].status === false) {
                 console.log('Large straight')
-                state.scoreTable[12].potentialScore = 20;
-                state.scoreTable[12].score = state.scoreTable[12].potentialScore;
+                state.multiScoreTable[5].potentialMultiScore = 20;
             }
         },
-        yatzy(state){
-            if(state.sortedDice[0] === state.sortedDice[4] && state.scoreTable[13].status === false){
+        yatzy(state) {
+            if (state.sortedDice[0] === state.sortedDice[4] && state.multiScoreTable[6].status === false) {
                 console.log('yatzy');
-                state.scoreTable[13].potentialScore = 50;
-                state.scoretable[13].score = state.scoretable[13].potentialScore;
+                state.multiScoreTable[6].potentialMultiScore = 50;
             }
         }
-    
+
     }
 })
 
@@ -247,16 +260,22 @@ Vue.component('scorecontainer', {
         <div>
         <p @click="chooseSingle(index)" v-for="value, index in $store.state.scoreTable">{{ value.name }}: {{ value.potentialScore }}</p>
         <p v-for="player, index in $store.state.players"> {{player.name}} Singles Score: {{player.singlesScore}} </p>
+        <p @click="chooseMulti(index)" v-for="value, index in $store.state.multiScoreTable">{{ value.name }}: {{ value.potentialMultiScore }}</p>
         <p v-for="player, index in $store.state.players">{{player.name}} Total Score: {{player.totalScore}} </p>
         </div>
     `,
     methods: {
         chooseSingle: function (index) {
+
             store.commit('chooseOnes', index);
+
             store.commit('activateBonus');
             store.commit('handleTotalScore', index);
         },
-
+        chooseMulti: function (index) {
+            store.commit('chooseMulti', index);
+            store.commit('handleTotalScore', index);
+        }
     }
 })
 
@@ -272,8 +291,15 @@ Vue.component('rolldicecomponent', {
         resetScore: function () {
             for (let i = 0; i < this.$store.state.scoreTable.length; i++) {
                 const element = this.$store.state.scoreTable[i];
-                if (this.$store.state.scoreTable[i].status === false)
+                if (this.$store.state.scoreTable[i].status === false) {
                     this.$store.state.scoreTable[i].potentialScore = 0;
+                }
+            }
+            for (let i = 0; i < this.$store.state.multiScoreTable.length; i++) {
+                const element = this.$store.state.multiScoreTable[i];
+                if (this.$store.state.multiScoreTable[i].status === false) {
+                    this.$store.state.multiScoreTable[i].potentialMultiScore = 0;
+                }
 
             }
         },
