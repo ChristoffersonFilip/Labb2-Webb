@@ -1,10 +1,33 @@
-.diceContainer{
+
+#app{
+    grid-column: 2;
     display: grid;
-    grid-template-columns: repeat(5,1fr);
-    grid-template-rows: repeat(3, 1fr);
+    grid-template-columns: repeat(3, 0.5fr);
+    grid-template-rows: repeat(3, 0.5fr);
+    
 }
 
-.diceArea{
-    grid-row: 3 / span 5;
-    grid-column: 1 / span 5;
+.diceContainer{
+    grid-column: 2;
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: repeat(5,1fr); 
+    grid-gap: 10px
 }
+#diceposition{
+    grid-column: 2;
+    grid-row: 2;
+}
+#rollposition{
+    grid-column: 2;
+    grid-row: 3;
+    text-align: center;
+
+}
+#scoreposition{  
+    grid-column: 2;
+    grid-row: 1;
+    border: solid black 1px;
+    background-color: aqua;
+}
+
