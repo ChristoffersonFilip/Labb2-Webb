@@ -312,6 +312,9 @@ Vue.component('rolldicecomponent', {
                     this.$store.state.scoreTable[i].potentialScore = 0;
                 }
             }
+        },
+        resetMultiScore: function(){
+            
             for (let i = 0; i < this.$store.state.multiScoreTable.length; i++) {
                 const element = this.$store.state.multiScoreTable[i];
                 if (this.$store.state.multiScoreTable[i].status === false) {
@@ -332,6 +335,7 @@ Vue.component('rolldicecomponent', {
         },
         diceRoll: function () {
             this.resetScore();
+            this.resetMultiScore();
 
             for (let i = 0; i < this.$store.state.dices.length; i++) {
 
