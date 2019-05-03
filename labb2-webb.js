@@ -110,6 +110,11 @@ const store = new Vuex.Store({
             multiScore: 0,
             potentialMultiScore: 0,
             status: false
+        },{
+            name: 'Chance',
+            multiScore: 0,
+            potentialMultiScore: 0,
+            status: false
         }, {
             name: 'Yatzy',
             multiScore: 0,
@@ -118,15 +123,19 @@ const store = new Vuex.Store({
         }]
     },
     mutations: {
+        //locks the scoreboard until unlockScore is used
         lockScore(state) {
             state.secureScore[0].state = true;
         },
+        //unlocks the ability to choose a score
         unlockScore(state){
             state.secureScore[0].state = false;
         },
+        //simply changes the hold state of the dice, so it doesn't change value
         selectDice(state, index) {
             state.dices[index].hold = !state.dices[index].hold
         },
+        //puts the dice into it's own array to make it easier to do the calculations for scores
         sortDice(state) {
             state.sortedDice = [];
             for (var i = state.dices.length - 1; i >= 0; i--) {
@@ -134,6 +143,7 @@ const store = new Vuex.Store({
             }
             state.sortedDice.sort();
         },
+        //Handles the scoring of everything above Pair, puts the values into singles score and total score
         chooseOnes(state, index) {
             if (state.scoreTable[index].status === false) {
                 state.scoreTable[index].status = true;
@@ -146,6 +156,7 @@ const store = new Vuex.Store({
                 console.log('singlechoice');
             }
         },
+        //Handles the scoring of Pair and everything below
         chooseMulti(state, index) {
             if (state.multiScoreTable[index].status === false) {
                 state.multiScoreTable[index].status = true;
@@ -155,6 +166,7 @@ const store = new Vuex.Store({
                 console.log('multichoice');
             }
         },
+        //Activates the bonus if the player reaches 63 points or above with "Single scores"
         activateBonus(state) {
             if (state.players[0].singlesScore >= 63) {
                 state.scoreTable[6].status = true;
@@ -164,7 +176,7 @@ const store = new Vuex.Store({
                 state.players[0].totalScore += state.scoreTable[6].score;
             }
         },
-
+        //Below this point is simply lots of rules and comparings to the different scoring system
         diceSingleCombos(state) {
             for (let i = 0; i < state.sortedDice.length; i++) {
                 const element = state.sortedDice[i];
@@ -186,6 +198,15 @@ const store = new Vuex.Store({
                 if (state.sortedDice[i] === 6 && state.scoreTable[5].status === false) {
                     state.scoreTable[5].potentialScore += 6
                 }
+            }
+        },
+        chance(state){
+            if(state.multiScoreTable[6].status === false){
+                for (let i = 0; i < state.sortedDice.length; i++) {
+                    const element = state.sortedDice[i];
+                    state.multiScoreTable[6].potentialMultiScore += state.sortedDice[i];
+                }
+                
             }
         },
 
@@ -331,18 +352,22 @@ Vue.component('rolldicecomponent', {
             }
         }
     },
+    // This componets handles all the functions and doings when rolling the dice, 
+    // such as giving random numbers, putting the right dice picture at the right place and checking for the various scores
     template: `
        <div>
        <a class="button" @click="diceRoll">Roll dice {{ timesRolled.rolls }} / 3</a>
        </div>
        `,
     methods: {
+        //Counts the number of times you roll the dice, resets at 4
         incTimesRolled: function(){
             this.timesRolled.rolls += 1;
             if(this.timesRolled.rolls === 4){
                 this.timesRolled.rolls = 1;
             }
         },
+        //resets the score on the scoreboard so it doesn't increase infinetly
         resetScore: function () {
             for (let i = 0; i < this.$store.state.scoreTable.length; i++) {
                 const element = this.$store.state.scoreTable[i];
@@ -361,6 +386,7 @@ Vue.component('rolldicecomponent', {
 
             }
         },
+        //checks if any dice matches the scores on the scoreboard and applies a value to it
         checkForScores: function () {
             store.commit('diceSingleCombos');
             store.commit('pair');
@@ -370,12 +396,15 @@ Vue.component('rolldicecomponent', {
             store.commit('smallStraight');
             store.commit('largeStraight');
             store.commit('yatzy');
+            store.commit('chance');
         },
         diceRoll: function () {
             this.resetScore();
             this.resetMultiScore();
             this.incTimesRolled();
-            store.commit('unlockScore');
+            if(this.$store.state.secureScore[0].state === true && this.timesRolled.rolls === 1){
+                store.commit('unlockScore');
+                }
             
 
             for (let i = 0; i < this.$store.state.dices.length; i++) {
@@ -390,8 +419,8 @@ Vue.component('rolldicecomponent', {
             store.commit('sortDice');
             this.checkForScores();
 
-        },
-    },
+        }
+    }
     
     
 })
@@ -427,43 +456,7 @@ Vue.component('dice', {
         //Generates an image of the dice depending on the value that is randomly generated 
 
     },
-    computed: {
-        generateImage: function () {
 
-            if (this.$store.state.dices[this.index].roll === 1) {
-                return "http://i.imgur.com/6knk862.png";
-            }
-
-            if (this.$store.state.dices[this.index].roll === 2) {
-                return "http://i.imgur.com/ik7dK9D.png";
-            }
-
-            if (this.$store.state.dices[this.index].roll === 3) {
-                return "http://i.imgur.com/sh0H0td.png";
-            }
-
-            if (this.$store.state.dices[this.index].roll === 4) {
-                return "http://i.imgur.com/1GPkhq3.png";
-            }
-
-            if (this.$store.state.dices[this.index].roll === 5) {
-                return "http://i.imgur.com/bINitmy.png";
-            }
-
-            if (this.$store.state.dices[this.index].roll === 6) {
-                return "http://i.imgur.com/6qXMSrt.png";
-            }
-            return "http://i.imgur.com/6knk862.png";
-        }
-
-    },
-    checkDiceStatus(index) {
-        if (this.index.hold === true) {
-            this.isHold = true;
-        } else {
-            this.isHold = false;
-        }
-    }
 
 })
 
