@@ -12,7 +12,15 @@
         grid-row: 2;
         display: grid;
         grid-template-columns: repeat(5, 1fr);
-        grid-gap: 10px
+        grid-gap: 10px;
+        margin-top: 1vh;
+    }
+
+    .lockedDice {
+        grid-column: 2;
+        grid-row: 2;
+        border: solid black 2px;
+        
     }
 
     #diceposition {
@@ -22,9 +30,10 @@
 
     #rollposition {
         grid-column: 2;
-        grid-row: 3;
+        grid-row: 2;
         text-align: center;
-
+        margin-top: 16vh;
+        margin-bottom: 5vh;
     }
 
     #scoreposition {
@@ -32,6 +41,14 @@
         grid-row: 1;
         border: solid black 1px;
         background-color: aqua;
+    }
+
+    .usedScore{
+        text-decoration: line-through;
+        border: solid black 1px;
+        background-color: aqua;
+        grid-column: 2;
+        grid-row: 2;
     }
 }
 
@@ -41,15 +58,43 @@
         grid-row: 2;
         display: grid;
         grid-template-columns: repeat(5, 1fr);
-        grid-gap: 10px
+        grid-gap: 10px;
+        margin-top: 1vh;
     }
 
-    #rollposition{
-        grid-row: 1;
+    .lockedDice {
         grid-column: 2;
+        grid-row: 2;
+        border: solid black 2px;
+        
     }
-    #scoreposition{
-        grid-column: 1 / span 2;
+
+    #diceposition {
+        grid-column: 2;
+        grid-row: 2;
+    }
+
+    #rollposition {
+        grid-column: 2;
+        grid-row: 2;
+        text-align: center;
+        margin-top: auto;
+        margin-bottom: auto;
+
+    }
+
+    #scoreposition {
+        grid-column: 1 / span 3;
+        grid-row: 1;
+        border: solid black 1px;
+        background-color: aqua;
+    }
+
+    .usedScore{
+        text-decoration: line-through;
+        border: solid black 1px;
+        background-color: aqua;
+        grid-column: 2;
         grid-row: 2;
     }
 
